@@ -1,0 +1,23 @@
+**Docker**
+
+La idea detras de Docker es crear contenedores ligeros y portables para las aplicaciones de software
+que puedan ejecutarse en cualquier maquina con Docker instalado, independientemente del sistema operativo,
+facilitando asi los despliegues.
+
+Contenedor: imagina un contenedor de esos q suelen llevar los barcos de mercancia q contiened distintos productos, en
+	otras palabras es algo auto contenido en si q c puede llevar de una lado a otro de forma independiente, es decir, q s portable.
+
+Ahora pensemos n todo lo q ocupa una api para ejecutarse:
+	1.- un servidor
+		1.1 dependiendo del tipo d aplicacion el servidor ocupara tener insataladas ciertas dependencias
+			para q la app c ejecute.
+			1.1.1 Esas dependencias pueden ser por ejemplo NodeJs version x.x , NPM version x.x , Mongo, Nginx , etc.
+				Si es una app d .Net ocuparia IIS, windows container, .net version xxx , etc.
+Docker nos permite agregar a un contenedor todas aquellas dependencias q nuestra aplicacion necesita, incluyendo la aplicacion en si claro,
+asi podemos llevar ese contenedor a cualquier maquina q tenga Docker instalado y ejecutar la aplicacion, sin preocuparnos en nada mas.
+
+Beneficios:
+Docker es una herramienta diseñada para beneficiar a los desarrolladores, a los testers, admin de sistemas en relacion a los entornos
+donde se ejecuta la aplicacion y los procesos de despliegue.
+Ayuda a q l desarrollador se centre solo n l codigo sin preocuparse por versiones, dependdencias, etc.
+Los contenedores de Docker son mas ligeros q una maquina virtual

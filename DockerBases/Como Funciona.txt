@@ -1,0 +1,60 @@
+**Docker, como funciona**
+ 1.- para crear un contenedor necesitamos una imagen.
+	Docker cuenta con imagenes ya configuradas listas para correr y gratis.
+ 2.- Una imagen es creada a partir d un Dockerfile.
+	Este s un archivo plano q da las instrucciones para poder crear una imagen y luego pasar a ser un contenedor.
+ 3.- El Dockerfile esta basado en instrucciones.
+	Son instrucciones o capas q c leen de arriba hacia abajo q l dice a docker como queda nuestro contenedor una vez
+	a este corriendo.
+ 4.- La imagen puede ser compartida y es reutilizable. 
+ 5.- La data de los contenedores persiste en Volumenes.
+	estos datos en si no persisten, es decir si creamos un contenedor de MongoDb y si introducimos info a esa BD apagamos el contenedor
+	en ese instante los datos se pierden, para resolver eso existen los Volumenes.
+
+--Imagenes
+En el contexto d q ocupo un ambiente para trabajar en NodeJs sin instalar ninguna dependencia en el host.
+con docker haria lo sig.
+	docker run/pull node:tag
+docker: command software docker installed
+pull: descarga la imagen
+run: corre el contenedor, si no existe la descarga. 
+node:tag, Imagen q queremos descargar y version especifica q c conoce como tag
+Ejemplo:
+	docker run --name some-mongo -p 27017:27017 -d mongo
+docker run, corre la imagen
+--name, parametro name
+some-mongo, valor para el parametro --name. este es el nombre q tendra nuestro container
+-p, parametro puerto
+27017:27017, valor para el parametro puerto, aqui estamos diciendo q el host y el contenedor tendran el mismo puerto para el mapeo
+-d mongo, para seleccionar la imagen expuesta en el repositorio de docker
+
+--Dockerfile
+Para entrar en context imaginemos q ocupamos crear una imagen de alguna aplicacion. Entonces los datos q tendria dicho archivo
+serian los sig.
+	FROM    	node  	-->imagen base. nuestra imagen configurada, n s t caso node, pero puede ser python, .net Core , etc.
+	MAINTAINER	Victor Hugo  -->author casi no c usa
+	COPY		. /var/www --> Copiar, el "." significa el directorio actual donde este el dockerfile quiere decir q a 
+					partir de ahi se va a copiar a la carpeta www q esta dentro de var
+	WORKDIR		/var/www  -->directorio de trabajo n l contenedor, es por ejemplo el directorio defualt donde queda instalada una 					aplicacion, es decir los comandos funcionaran a partir de aqui
+	RUN		npm install --> Script a ejecutar antes de, prepara una vez q c han copiado los archivos n nuestra aplicacion y tenemos 					el workdir configurado, como s una app nodejs lo primero q tenemos q hacer es instalar todas								las dendencias en nuestro contenedor.
+	EXPOSE		8081  --> expose le dice a nuestro container si va a exponer algun puerto n st caso 8081
+	ENTRYPOINT	["node", "server.js"] --> entrypoint s l punto de arranque de nuestro container, l dice por donde va a iniciar,
+						"node" s l comando y "server.js"  el programa entonces hasta este punto el conainer ya debió
+							tener instalado node y sus dependencias, directorio de trabajo , etc.
+Una vez q este configurado el docker file ejecutamos el comando: 
+	docker build . -t my-nodejs-image
+ "docker build" , comando para compilar o ejecutar el archivo dockerfile
+ "." , significa q estamos en la ruta del dockerfile en caso contrario poner la ruta explicitamente
+ "-t" , nos sirve para indicar un nombre a nuestra imagen
+ "my-nodejs-image" , valor para "-t"
+para las version de container al final del nombre d la imagen van : "nombreEnEspecifico" para la version
+--Palabras clave Dockerfile
+ --VOLUME, nos sirve para mapear un valumen directamente de un docker file
+ --ENV, nos sirve para las variables de entorno para inyectar una a nuestro container.
+
+--Persistencia de los datos(VOLUMENES)
+El sig comando nos sirve para que los datos guardados en el container permanezca, este c hace mediante los VOLUMES de docker
+	docker run --name some-mongo -p 27017:27017 -d mongo -v ~/data:/data/db
+"-v" , comando volume 
+"~/data:/data/db" , "~/data" es la ruta(sistemas unix) home del host(SO). "/data/db" s la ruta en el container, s donde mongo guarda 
+	por defecto la informacion. Entonces significa q la info se va a estar guardando en estas dos rutas.

@@ -1,0 +1,35 @@
+##Docker uso de volumenes##
+    Descargamos la plantilla de express llamada handlebars (hbs) para usarla en un contenedor de Docker usando volumenes.
+
+Paso 1: Instalar una dependencia global a nivel de nodejs llamada express generator, Q servirá para generar proyectos de express ya hechos(template)
+    npm i -g express-generator.
+Paso 2: Crear el template con el paquete instalado anteriormente. Usamo el template engine handlebars (hbs). podemos buscar en internet.
+    Antes de crear todo, es importante recalcar q para usar los directorios en Docker siempre hay q usar lowercase y para no complicarnos
+    sin espacios al usar los nombres. para no complicarme meti la plantilla en la raiz de mi particion  quedando "/d/express-template".
+    2.1 Ejecutar el comando "express --views=hbs express-template". nos crea la carpeta express-template
+        "express": comando para generar la plantilla.
+        "--views=hbs": Decimos q vista o plantilla queremos, existen otras a hbs
+        "express-template": nombre para el proyecto
+Paso 3: Instalar las dependencia de la plantilla, comando: "npm install" o "npm i"
+    3.1: Correr la plantilla con el comando "npm start"
+    3.2: Abrir en navegador, defualt corre en localhost:3000
+Paso 4: dockerizar la plantilla a un contenedor usando volumenes, vamos a asociar los archivos fisicos q estan el host con los archivos fisicos 
+    que estaran en el contenedor, de manera q cada modificacion en el host se refleje en el contenedor. 
+    Debemos escribir los comandos en la ruta del proyecto, usaremos la imagen oficial node de docker hub.
+    Escribir los comandos de preferencia en power shell para no batallar con las rutas, en concreto con esta instruccion $(pwd).
+    La instruccion pwd nos arroja el directiorio actual, y de esta manera $(pwd) la usamos con docker.
+    La sig instruccion $(pwd):/var/www sin comillas no es valida en windows en sistemas unix si.
+    4.1 Escribir el comando "docker run -p 3000:3000 -v "$(pwd):/var/www" -w "/var/www" node npm start"
+        "docker run":corre la imagen 
+        "-p 3000:3000": la configuramos en el puerto(-p) 3000 tanto para el host y contenedor, es decir, mapearemos con el mismo puerto
+        "-v "$(pwd):/var/www"": Hacemos el volumen(-v) en la sig rutas: Con $(pwd) le manadamos la ruta actual de nuestro proyecto(/d/express-template) a docker, quiere
+            decir q d esta ruta tomara los archivos para hacer el copiado. Con /var/www le decimos a docker q use esta ruta para pegar los archivos en el contenedor.
+        "-w "/var/www"": workdir(-w) o directorio de trabajo default, s como una variable de entorno en windows, /var/www s l dir d trabajo default.
+        "node": node s l nombre de la imagen q queremos levantar para nuestro container.
+        "npm start": ejecutamos el comando start del package.json levantara la aplicacion, podemos ejecutar esto porque con los comandos anteriores ya configuramos la
+            ruta donde estará nuestra app y el directiorio defualt para correr los comandos todo esto ya n l contenedor y le decimos a docker
+            q imagen va a levantar antes de ejecutar este comando.
+Paso 5: Comprobar q c esta haciendo el volumen de datos.
+    5.1 En nuestro host modificamos la vista index agregandole al titulo (linea 5) el sig texto "In NodeJs Bible Course", Guardamos y actulizamos n l navegador.  
+        deberá reflejarse el cambio.  
+Nota: para compilar la imagen tuve q registrarme en docker

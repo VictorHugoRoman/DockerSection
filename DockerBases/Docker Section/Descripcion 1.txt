@@ -1,0 +1,54 @@
+##Comenzando a usar Docker##
+
+Paso 1: Instalar la tools Docker Microsoft.
+    Nos permite manejar, volumenes, imagenes, redes simplemente.
+Paso 2: Crear una app con nodejs para dockerizarla en nuestro container de Docker.
+    2.1 Ocupamos una imagen de nodejs en nuestro pc. Iremos al repositorio de imagenes de Docker.
+        repo: https://hub.docker.com/ , imagen de node: https://hub.docker.com/_/node
+        en la imagen de node a lado derecho viene el comando para descargarla: "docker pull node" aún no descargarla, seguir los sig pasos
+    2.2 Creamos el archivo index.js , este pequeño script será nuestro programa.
+    2.3 Creamos el archivo Dockerfile , por convecion se escribe así pero podemos usar otro nombre.
+        --FROM node , le decimos a docker q nuestra imagen va a heredar las funcionalidades de la imagen de node
+        --COPY . /var/www , con el "." decimos q todo lo q c encuentre en la carpeta donde tenemos el Dockerfile c copie a la carpeta www (/var/www).
+        --WORKDIR /var/www , directorio defualt n l q vamos a trabajar, para q todos los scripts q c ejecuten en nuestro container tengan este directorio.
+        --ENTRYPOINT ["node", "index.js"] , con esto le decimos a docker q ejecute los comandos q estan dentro del array, en este caso seria "node index.js"
+            que correra nuestro script.js.
+    2.4 Compilamos el Dockerfile 
+        En Terminal nos ubicamos en l dir donde esta l Dockerfile, ejecutamos el comando "docker build . -t nodejs-bible-docker"
+            "docker build" : compila la el archivo Dockerfile
+            "." : es el archivo Dockerfile podemos usar esto o explicitamente el nombre
+            "-t" : para darle un nombre o etiquetar la imagen
+            "nodejs-bible-docker" : Nombre o etiqdireta de nuestra imagen
+        Por defecto al correr el comando se le pone el tag latest q s la ultima version de dicha imagen, cuando termina de ejecutarse el comando
+        podemos ver a lo ultimo el sig texto "tagged nodejs-bible-docker:latest".
+    2.5 Corremos la imagen.
+        docker run --name some-nodejs-application -d nodejs-bible-docker, si c ejecuta correctamente nos retorna un id generado para nuestro container
+            "docker run" : corre la imagen
+            "--name" : nombre para el contenedor
+            "some-nodejs-application" : valor para --name , nombre q tendrá el contenedor
+            "-d" : nombre de la imagen correr
+            "nodejs-bible-docker" :  valor para -d , nombre de la imagen
+    2.6 En la parte Izq de VSCode dbra aparecer la imagen corriendo
+    2.7 Ver la imagenes q estan corriendo. comando: "docker ps"
+        al ejecutar podemos ver nuestra imagen,
+        IMAGE: nombre de la imagen
+        NAMES: nombre del contenedor
+        COMMAND: comando que metimos en el Dockerfile al EntryPoint
+    2.8 Para compartir la imagen simplemente la persona q tenga instalado docker podra ver nuestra imagen con el nombre "nodejs-bible-docker" 
+Paso 3.0 Hacer una prueba de conexion con una imagen mongo.
+    3.1 Descargar una imagen de mongo en Docker Hub https://hub.docker.com/_/mongo
+        Comando: docker pull mongo
+    3.2 Instalar MongoDB Compass para hacer la conexion, https://www.mongodb.com/try/download/compass.
+    3.3 Levantar la imagen para mapear el puerto en nuestro host, por defualt Mongo expone el puerto 27017.
+        Comando: docker run --name some-mongo -p 27017:27017 -d mongo, si c ejecuta correctamente nos retorna un id generado para nuestro container
+            "docker run": corre la imagen
+            "--name some-mongo" : nombre para el contenedor le mandamos some-mongo.
+            "-p 27017:27017": puertos a mapear puertoHost:PuertoContainer, con esto ya le damos un seguimiento de puerto  de nuestro host a nuestro container de mongo.
+            "-d mongo": mode interactive para q c mantenga el contenedor, seguido de el nombre de la imagen
+    3.4 Ir a la application MongoDB Compass para conectarnos.
+        por defualt es host: localhost, port 27017
+        Nota: Para exponer una imagen manualmente en el Dockerfile tenemos que meter la instruccion de EXPOSE de los puertos, Recordar 
+            q c pueden hacer volumenes tambien en el Dockerfile para la persistencia de los datos, comando: docker run --name some-mongo -p 27017:27017 -d mongo -v
+            donde -v c usa para el volumen.
+
+Nota: para compilar la imagen tuve q registrarme en docker
